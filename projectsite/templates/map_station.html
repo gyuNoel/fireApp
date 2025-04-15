@@ -61,7 +61,7 @@
     var markers = [];
 
     // Define the marker data (received from Django context)
-    var markerData = JSON.parse('{{ fireStations|safe|escapejs }}');
+    var markerData =  {{ fireStations|safe }};
 
     // Loop through the marker data and create markers
     markerData.forEach(function (data) {
