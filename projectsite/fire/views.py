@@ -11,52 +11,68 @@ from datetime import datetime
 
 class HomePageView(ListView):
     model = Locations
-    context_object_name = 'home'
+    context_object_name = "home"
     template_name = "home.html"
 
+
 class ChartView(ListView):
-    template_name = 'chart.html'
+    template_name = "chart.html"
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
-    
+
     def get_queryset(self):
         pass
 
+
 def PieCountbySeverity(request):
-    query = '''
+    query = """
     SELECT severity_level, COUNT (*) as count
     FROM fire_incident
     GROUP BY severity_level
-    '''
-    data ={}
-    with connection.cursor () as cursor:
+    """
+    data = {}
+    with connection.cursor() as cursor:
         cursor.execute(query)
-        rows =cursor.fetchall()
+        rows = cursor.fetchall()
 
     if rows:
-        #Construct the dictionary with severity level as keys and count as values
+        # Construct the dictionary with severity level as keys and count as values
         data = {severity: count for severity, count in rows}
     else:
         data = {}
 
     return JsonResponse(data)
 
+
 def LineCountbyMonth(request):
     current_year = datetime.now().year
     result = {month: 0 for month in range(1, 13)}
 
-    incidents_per_month = Incident.objects.filter(date_time_year=current_year) \
-        .values_list('date_time', flat=True)
-    
-    #Counting the number of incidents per month
+    incidents_per_month = Incident.objects.filter(
+        date_time_year=current_year
+    ).values_list("date_time", flat=True)
+
+    # Counting the number of incidents per month
     for date_time in incidents_per_month:
         month = date_time.month
-        result [month] +=1
+        result[month] += 1
 
-    #IF you want to convert month numbers to month names, you can use a dictionary mapping
+    # IF you want to convert month numbers to month names, you can use a dictionary mapping
     month_names = {
-        1:'Jan', 2:'Feb', 3:'Mar', 4:'Apr', 5:'May', 6:'Jun', 7:'Jul', 8:'Aug', 9:'Sep', 10:'Oct', 11:'Nov', 12:'Dec'
+        1: "Jan",
+        2: "Feb",
+        3: "Mar",
+        4: "Apr",
+        5: "May",
+        6: "Jun",
+        7: "Jul",
+        8: "Aug",
+        9: "Sep",
+        10: "Oct",
+        11: "Nov",
+        12: "Dec",
     }
 
     result_with_month_names = {
@@ -64,8 +80,9 @@ def LineCountbyMonth(request):
     }
     return JsonResponse(result_with_month_names)
 
+
 def MultilineIncidentTop3Country(request):
-    query = '''
+    query = """
     SELECT 
     fl.country, 
     strftime('%m', fi.date_time) AS month, 
@@ -95,7 +112,7 @@ def MultilineIncidentTop3Country(request):
         fl.country, month 
     ORDER BY 
         fl.country, month;
-    '''
+    """
     with connection.cursor() as cursor:
         cursor.execute(query)
         rows = cursor.fetchall()
@@ -130,8 +147,9 @@ def MultilineIncidentTop3Country(request):
 
     return JsonResponse(result)
 
+
 def multipleBarbySeverity(request):
-    query = '''
+    query = """
     SELECT 
         fi.severity_level,
         strftime('%m', fi.date_time) AS month,
@@ -139,38 +157,55 @@ def multipleBarbySeverity(request):
     FROM
         fire_incident fi
     GROUP BY fi.severity_level, month 
-    '''
+    """
 
     with connection.cursor() as cursor:
         cursor.execute(query)
         rows = cursor.fetchall()
 
     result = {}
-    months = set (str(i).zfill(2) for i in range(1,13))
+    months = set(str(i).zfill(2) for i in range(1, 13))
 
     for row in rows:
-        level = str(row[0]) # Ensure theseverity level is a string
+        level = str(row[0])  # Ensure theseverity level is a string
         month = row[1]
         total_incidents = row[2]
 
         if level not in result:
-            result [level] = {month: 0 for month in months}
-        result [[level]][month] = total_incidents
+            result[level] = {month: 0 for month in months}
+        result[[level]][month] = total_incidents
     # Sort months within each severity level
     for level in result:
-        result [level] = dict(sorted(result[level].items()))
+        result[level] = dict(sorted(result[level].items()))
 
     return JsonResponse(result)
 
+
 def map_station(request):
-    fireStations = FireStation.objects.values('name', 'latitude', 'longitude')
+    fireStations = FireStation.objects.values("name", "latitude", "longitude")
 
     for fs in fireStations:
-        fs['latitude'] = float(fs['latitude'])
-        fs['longitude'] =  float(fs['longitude'])
+        fs["latitude"] = float(fs["latitude"])
+        fs["longitude"] = float(fs["longitude"])
 
     fireStations_list = list(fireStations)
     context = {
-        'fireStations': fireStations_list,
+        "fireStations": fireStations_list,
     }
-    return render(request, 'map_station.html', context)
+    return render(request, "map_station.html", context)
+
+
+def fire_incident_map(request):
+
+    fireIncidents = Locations.objects.values("name", "latitude", "longitude")
+    for fs in fireIncidents:
+        fs["latitude"] = float(fs["latitude"])
+        fs["longitude"] = float(fs["longitude"])
+
+    fireIncidents_list = list(fireIncidents)
+
+    context = {
+        "fireIncidents": fireIncidents_list,
+    }
+
+    return render(request, "fire_incident_map.html", context)
