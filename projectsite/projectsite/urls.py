@@ -10,6 +10,10 @@ from fire.views import (
     multipleBarbySeverity,
     map_station,
     fire_incident_map,
+    FireStationView,
+    FireStationCreateView,
+    FireStationUpdateView,
+    FireStationDeleteView,
 )
 from fire import views
 
@@ -23,4 +27,18 @@ urlpatterns = [
     path("map-station", views.map_station, name="map-station"),
     path("stations/", map_station, name="map-station"),
     path("fire_incidents/", fire_incident_map, name="fire-incidents"),
+    path("firestation_list", FireStationView.as_view(), name="firestation-list"),
+    path(
+        "firestation_list/add", FireStationCreateView.as_view(), name="firestation-add"
+    ),
+    path(
+        "firestation_list/<pk>",
+        FireStationUpdateView.as_view(),
+        name="firestation-update",
+    ),
+    path(
+        "firestation_list/<pk>/delete",
+        FireStationDeleteView.as_view(),
+        name="firestation-delete",
+    ),
 ]
