@@ -141,6 +141,16 @@
                 <div class="collapse" id="base">
                   <ul class="nav nav-collapse">
                     <li>
+                      <a href="{% url 'locations-list' %}">
+                        <span class="sub-item">Locations</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="{% url 'locations-list' %}">
+                        <span class="sub-item">Incidents</span>
+                      </a>
+                    </li>
+                    <li>
                       <a href="{% url 'firestation-list' %}">
                         <span class="sub-item">Fire Stations</span>
                       </a>
@@ -156,8 +166,8 @@
                       </a>
                     </li>
                     <li>
-                      <a href="components/buttons.html">
-                        <span class="sub-item">Buttons</span>
+                      <a href="{% url 'locations-list' %}">
+                        <span class="sub-item">Weather Conditions</span>
                       </a>
                     </li>
                     
