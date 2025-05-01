@@ -14,6 +14,10 @@ from fire.views import (
     FireStationCreateView,
     FireStationUpdateView,
     FireStationDeleteView,
+    FirefightersView,
+    FirefightersCreateView,
+    FirefightersUpdateView,
+    FirefightersDeleteView,
 )
 from fire import views
 
@@ -40,5 +44,19 @@ urlpatterns = [
         "firestation_list/<pk>/delete",
         FireStationDeleteView.as_view(),
         name="firestation-delete",
+    ),
+    path("firefighters_list", FirefightersView.as_view(), name="firefighters-list"),
+    path(
+        "firefighters_list/add", FirefightersCreateView.as_view(), name="firefighters-add"
+    ),
+    path(
+        "firefighters_list/<pk>",
+        FirefightersUpdateView.as_view(),
+        name="firestation-update",
+    ),
+    path(
+        "firefighters_list/<pk>/delete",
+        FirefightersDeleteView.as_view(),
+        name="firefighters-delete",
     ),
 ]

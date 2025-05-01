@@ -253,3 +253,30 @@ class FireStationDeleteView(DeleteView):
     model = FireStation
     template_name = "firestation_delete.html"
     success_url = reverse_lazy("firestation-list")
+
+
+class FirefightersView(ListView):
+    model = Firefighters
+    context_object_name = "Firefighters"
+    template_name = "firefighters_list.html"
+    paginate_by = 5
+
+
+class FirefightersCreateView(CreateView):
+    model = Firefighters
+    form_class = FireFightersForm
+    template_name = "firefighters_add.html"
+    success_url = reverse_lazy("firefighters-list")
+
+
+class FirefightersUpdateView(UpdateView):
+    model = Firefighters
+    form_class = FireFightersForm
+    template_name = "firefighters_edit.html"
+    success_url = reverse_lazy("firefighters-list")
+
+
+class FirefightersDeleteView(DeleteView):
+    model = Firefighters
+    template_name = "firefighters_delete.html"
+    success_url = reverse_lazy("firefighters-list")
