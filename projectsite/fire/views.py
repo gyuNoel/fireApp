@@ -311,7 +311,7 @@ class FiretruckDeleteView(DeleteView):
 class LocationsView(ListView):
     model = Locations
     context_object_name = "Locations"
-    template_name = "locations_list.html"
+    template_name = "location_list.html"
     paginate_by = 5
 
 
