@@ -30,6 +30,10 @@ from fire.views import (
     IncidentsCreateView,
     IncidentsUpdateView,
     IncidentsDeleteView,
+    WeatherConditionsView,
+    WeatherConditionsCreateView,
+    WeatherConditionsUpdateView,
+    WeatherConditionsDeleteView,
 )
 from fire import views
 
@@ -118,5 +122,20 @@ urlpatterns = [
         "incidents_list/<pk>/delete",
         IncidentsDeleteView.as_view(),
         name="incidents-delete",
+    ),
+    #Weather Conditions
+    path("weathercondition_list", WeatherConditionsView.as_view(), name="weathercondition-list"),
+    path(
+        "weathercondition_list/add", WeatherConditionsCreateView.as_view(), name="weathercondition-add"
+    ),
+    path(
+        "weathercondition_list/<pk>",
+        WeatherConditionsUpdateView.as_view(),
+        name="weathercondition-update",
+    ),
+    path(
+        "weathercondition_list/<pk>/delete",
+        WeatherConditionsDeleteView.as_view(),
+        name="weathercondition-delete",
     ),
 ]
