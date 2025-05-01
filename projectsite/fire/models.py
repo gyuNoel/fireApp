@@ -12,9 +12,11 @@ class BaseModel(models.Model):
 class Locations(BaseModel):
     name = models.CharField(max_length=150)
     latitude = models.DecimalField(
-        max_digits=22, decimal_places=16, null=True, blank=True)
+        max_digits=22, decimal_places=16, null=True, blank=True
+    )
     longitude = models.DecimalField(
-        max_digits=22, decimal_places=16, null=True, blank=True)
+        max_digits=22, decimal_places=16, null=True, blank=True
+    )
     address = models.CharField(max_length=150)
     city = models.CharField(max_length=150)  # can be in separate table
     country = models.CharField(max_length=150)  # can be in separate table
@@ -22,9 +24,9 @@ class Locations(BaseModel):
 
 class Incident(BaseModel):
     SEVERITY_CHOICES = (
-        ('Minor Fire', 'Minor Fire'),
-        ('Moderate Fire', 'Moderate Fire'),
-        ('Major Fire', 'Major Fire'),
+        ("Minor Fire", "Minor Fire"),
+        ("Moderate Fire", "Moderate Fire"),
+        ("Major Fire", "Major Fire"),
     )
     location = models.ForeignKey(Locations, on_delete=models.CASCADE)
     date_time = models.DateTimeField(blank=True, null=True)
@@ -35,9 +37,11 @@ class Incident(BaseModel):
 class FireStation(BaseModel):
     name = models.CharField(max_length=150)
     latitude = models.DecimalField(
-        max_digits=22, decimal_places=16, null=True, blank=True)
+        max_digits=22, decimal_places=16, null=True, blank=True
+    )
     longitude = models.DecimalField(
-        max_digits=22, decimal_places=16, null=True, blank=True)
+        max_digits=22, decimal_places=16, null=True, blank=True
+    )
     address = models.CharField(max_length=150)
     city = models.CharField(max_length=150)  # can be in separate table
     country = models.CharField(max_length=150)  # can be in separate table
@@ -45,18 +49,18 @@ class FireStation(BaseModel):
 
 class Firefighters(BaseModel):
     XP_CHOICES = (
-        ('Probationary Firefighter', 'Probationary Firefighter'),
-        ('Firefighter I', 'Firefighter I'),
-        ('Firefighter II', 'Firefighter II'),
-        ('Firefighter III', 'Firefighter III'),
-        ('Driver', 'Driver'),
-        ('Captain', 'Captain'),
-        ('Battalion Chief', 'Battalion Chief'),)
+        ("Probationary Firefighter", "Probationary Firefighter"),
+        ("Firefighter I", "Firefighter I"),
+        ("Firefighter II", "Firefighter II"),
+        ("Firefighter III", "Firefighter III"),
+        ("Driver", "Driver"),
+        ("Captain", "Captain"),
+        ("Battalion Chief", "Battalion Chief"),
+    )
     name = models.CharField(max_length=150)
     rank = models.CharField(max_length=150)
     experience_level = models.CharField(max_length=150)
-    station = models.CharField(
-        max_length=45, null=True, blank=True, choices=XP_CHOICES)
+    station = models.CharField(max_length=45, null=True, blank=True, choices=XP_CHOICES)
 
 
 class FireTruck(BaseModel):

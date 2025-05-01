@@ -1,9 +1,26 @@
 from django.shortcuts import render
 from django.views.generic.list import ListView
-from fire.models import Locations, Incident, FireStation
+from fire.models import (
+    Locations,
+    Incident,
+    FireStation,
+    Firefighters,
+    FireTruck,
+    WeatherConditions,
+)
 from django.db import connection
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.http import JsonResponse
 from django.db.models.functions import ExtractMonth
+from django.urls import reverse_lazy
+from fire.forms import (
+    LocationsForm,
+    IncidentsForms,
+    FireStationForm,
+    FireFightersForm,
+    FireTruckForm,
+    WeatherConditionsForm,
+)
 
 from django.db.models import Count
 from datetime import datetime
@@ -209,3 +226,30 @@ def fire_incident_map(request):
     }
 
     return render(request, "fire_incident_map.html", context)
+
+
+class FireStationView(ListView):
+    model = FireStation
+    context_object_name = "Fire Station"
+    template_name = "firestation_list.html"
+    paginate_by = 5
+
+
+class FireStationCreateView(CreateView):
+    model = FireStation
+    form_class = FireStationForm
+    template_name = "firestation_add.html"
+    success_url = reverse_lazy("firestation-list")
+
+
+class FireStationUpdateView(UpdateView):
+    model = FireStation
+    form_class = FireStationForm
+    template_name = "firestation_edit.html"
+    success_url = reverse_lazy("firestation-list")
+
+
+class FireStationDeleteView(DeleteView):
+    model = FireStation
+    template_name = "firestation_delete.html"
+    success_url = reverse_lazy("firestation-list")
