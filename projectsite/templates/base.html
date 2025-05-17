@@ -18,6 +18,22 @@
         },
       });
     </script>
+    
+<!-- Toast rendering -->
+    {% if messages %}
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          {% for message in messages %}
+          toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right"
+          };
+          toastr["{{ message.tags|escapejs }}"]("{{ message|escapejs }}");
+          {% endfor %}
+        });
+      </script>
+    {% endif %}
 
     <!-- CSS Files -->
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
@@ -26,6 +42,7 @@
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link rel="stylesheet" href="{% static 'css/demo.css' %}" />
   </head>
+
   <body>
     <div class="wrapper">
       <div class="main-header">
@@ -279,6 +296,11 @@
     <script src="{% static 'js/plugin/jqvmap/maps/jquery.vmap.world.js' %}"></script>
     <script src="{% static 'js/plugin/sweetalert/sweetalert.min.js' %}"></script>
     <script src="{% static 'js/atlantis.min.js' %}"></script>
+    <!-- jQuery and Toastr -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 
     {% block chart %}
 
