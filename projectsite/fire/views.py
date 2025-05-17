@@ -69,7 +69,7 @@ def LineCountbyMonth(request):
     result = {month: 0 for month in range(1, 13)}
 
     incidents_per_month = Incident.objects.filter(
-        date_time_year=current_year
+        date_time__year=current_year
     ).values_list("date_time", flat=True)
 
     # Counting the number of incidents per month
@@ -100,37 +100,39 @@ def LineCountbyMonth(request):
 
 
 def MultilineIncidentTop3Country(request):
+
     query = """
-    SELECT 
-    fl.country, 
-    strftime('%m', fi.date_time) AS month, 
-    COUNT(fi.id) AS incident_count 
-    FROM 
-        fire_incident fi 
-    JOIN 
-        fire_location fl ON fi.location_id = fl.id 
-    WHERE 
-    fl.country IN (
-        SELECT 
-            fl_top.country 
-        FROM 
-            fire_incident fi_top 
-        JOIN 
-            fire_location fl_top ON fi_top.location_id = fl_top.id 
-        WHERE 
-            strftime('%Y', fi_top.date_time) = strftime('%Y', 'now') 
-        GROUP BY 
-            fl_top.country 
-        ORDER BY 
-            COUNT(fi_top.id) DESC 
-        LIMIT 3 
-        ) 
-        AND strftime('%Y', fi.date_time) = strftime('%Y', 'now') 
-    GROUP BY 
-        fl.country, month 
-    ORDER BY 
+    SELECT
+        fl.country,
+        strftime('%m', fi.date_time) AS month,
+        COUNT(fi.id) AS incident_count
+    FROM
+        fire_incident fi
+    JOIN
+        fire_locations fl ON fi.location_id = fl.id
+    WHERE
+        fl.country IN (
+            SELECT
+                fl_top.country
+            FROM
+                fire_incident fi_top
+            JOIN
+                fire_locations fl_top ON fi_top.location_id = fl_top.id
+            WHERE
+                strftime('%Y', fi_top.date_time) = strftime('%Y', 'now')
+            GROUP BY
+                fl_top.country
+            ORDER BY
+                COUNT(fi_top.id) DESC
+            LIMIT 3
+        )   
+        AND strftime('%Y', fi.date_time) = strftime('%Y', 'now')
+    GROUP BY
+        fl.country, month
+    ORDER BY
         fl.country, month;
     """
+
     with connection.cursor() as cursor:
         cursor.execute(query)
         rows = cursor.fetchall()
@@ -139,7 +141,7 @@ def MultilineIncidentTop3Country(request):
     result = {}
 
     # Initialize a set of months from January to December
-    months = [str(i).zfill(2) for i in range(1, 13)]
+    months = set(str(i).zfill(2) for i in range(1, 13))
 
     # Loop through the query results
     for row in rows:
@@ -147,34 +149,34 @@ def MultilineIncidentTop3Country(request):
         month = row[1]
         total_incidents = row[2]
 
-    # If the country is not in the result dictionary, initialize it with all months set to zero
-    if country not in result:
-        result[country] = {month: 0 for month in months}
+        # If the country is not in the result dictionary, initialize it with all months set to zero
+        if country not in result:
+            result[country] = {month: 0 for month in months}
 
-    # Update the incident count for the corresponding month
-    result[country][month] = total_incidents
+        # Update the incidents count for the corresponding month
+        result[country][month] = total_incidents
 
     # Ensure there are always 3 countries in the result
     while len(result) < 3:
-        # Placeholder name for missng countries
-        missing_country = f"Country {len(result)+1}"
+        # Placeholder name for missing countries
+        missing_country = f"Country {len(result) + 1}"
         result[missing_country] = {month: 0 for month in months}
 
     for country in result:
-        result[country] = dict(sorted[country].items())
+        result[country] = dict(sorted(result[country].items()))
 
     return JsonResponse(result)
 
 
 def multipleBarbySeverity(request):
     query = """
-    SELECT 
+    SELECT
         fi.severity_level,
         strftime('%m', fi.date_time) AS month,
         COUNT(fi.id) AS incident_count
     FROM
         fire_incident fi
-    GROUP BY fi.severity_level, month 
+    GROUP BY fi.severity_level, month
     """
 
     with connection.cursor() as cursor:
@@ -182,19 +184,21 @@ def multipleBarbySeverity(request):
         rows = cursor.fetchall()
 
     result = {}
-    months = set(str(i).zfill(2) for i in range(1, 13))
+    months = {str(i).zfill(2) for i in range(1, 13)}
 
     for row in rows:
-        level = str(row[0])  # Ensure theseverity level is a string
+        level = str(row[0])  # Ensure the severity level is a string
         month = row[1]
         total_incidents = row[2]
 
         if level not in result:
             result[level] = {month: 0 for month in months}
-        result[[level]][month] = total_incidents
-    # Sort months within each severity level
-    for level in result:
-        result[level] = dict(sorted(result[level].items()))
+
+        result[level][month] = total_incidents
+
+        # Sort months within each severity level
+        for level in result:
+            result[level] = dict(sorted(result[level].items()))
 
     return JsonResponse(result)
 
@@ -241,15 +245,18 @@ class FireStationCreateView(CreateView):
     form_class = FireStationForm
     template_name = "firestation_add.html"
     success_url = reverse_lazy("firestation-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Fire station added successfully!")
         return super().form_valid(form)
+
 
 class FireStationUpdateView(UpdateView):
     model = FireStation
     form_class = FireStationForm
     template_name = "firestation_edit.html"
     success_url = reverse_lazy("firestation-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Fire station updated successfully!")
         return super().form_valid(form)
@@ -259,6 +266,7 @@ class FireStationDeleteView(DeleteView):
     model = FireStation
     template_name = "firestation_delete.html"
     success_url = reverse_lazy("firestation-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Fire station deleted successfully!")
         return super().form_valid(form)
@@ -276,6 +284,7 @@ class FirefightersCreateView(CreateView):
     form_class = FireFightersForm
     template_name = "firefighters_add.html"
     success_url = reverse_lazy("firefighters-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Firefighter added successfully!")
         return super().form_valid(form)
@@ -286,17 +295,21 @@ class FirefightersUpdateView(UpdateView):
     form_class = FireFightersForm
     template_name = "firefighters_edit.html"
     success_url = reverse_lazy("firefighters-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Firefighter updated successfully!")
         return super().form_valid(form)
+
 
 class FirefightersDeleteView(DeleteView):
     model = Firefighters
     template_name = "firefighters_delete.html"
     success_url = reverse_lazy("firefighters-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Firefighter deleted successfully!")
         return super().form_valid(form)
+
 
 class FiretruckView(ListView):
     model = FireTruck
@@ -310,26 +323,32 @@ class FiretruckCreateView(CreateView):
     form_class = FireTruckForm
     template_name = "firetruck_add.html"
     success_url = reverse_lazy("firestation-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Fire truck added successfully!")
         return super().form_valid(form)
+
 
 class FiretruckUpdateView(UpdateView):
     model = FireTruck
     form_class = FireTruckForm
     template_name = "firetruck_edit.html"
     success_url = reverse_lazy("firestation-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Fire truck updated successfully!")
         return super().form_valid(form)
+
 
 class FiretruckDeleteView(DeleteView):
     model = FireTruck
     template_name = "firetruck_delete.html"
     success_url = reverse_lazy("firetruck-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Fire truck deleted successfully!")
         return super().form_valid(form)
+
 
 class LocationsView(ListView):
     model = Locations
@@ -343,6 +362,7 @@ class LocationsCreateView(CreateView):
     form_class = LocationsForm
     template_name = "location_add.html"
     success_url = reverse_lazy("locations-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Location added successfully!")
         return super().form_valid(form)
@@ -353,18 +373,22 @@ class LocationsUpdateView(UpdateView):
     form_class = LocationsForm
     template_name = "location_edit.html"
     success_url = reverse_lazy("locations-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Location updated successfully!")
         return super().form_valid(form)
+
 
 class LocationsDeleteView(DeleteView):
     model = Locations
     template_name = "location_delete.html"
     success_url = reverse_lazy("flocations-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Location deleted successfully!")
         return super().form_valid(form)
-    
+
+
 class IncidentsView(ListView):
     model = Incident
     context_object_name = "Incidents"
@@ -377,27 +401,33 @@ class IncidentsCreateView(CreateView):
     form_class = IncidentsForms
     template_name = "incident_add.html"
     success_url = reverse_lazy("incidents-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Incident added successfully!")
         return super().form_valid(form)
+
 
 class IncidentsUpdateView(UpdateView):
     model = Incident
     form_class = IncidentsForms
     template_name = "incident_edit.html"
     success_url = reverse_lazy("incidents-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Incident updated successfully!")
         return super().form_valid(form)
+
 
 class IncidentsDeleteView(DeleteView):
     model = Incident
     template_name = "incident_delete.html"
     success_url = reverse_lazy("incidents-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Incident deleted successfully!")
         return super().form_valid(form)
-    
+
+
 class WeatherConditionsView(ListView):
     model = WeatherConditions
     context_object_name = "Weather Conditions"
@@ -410,23 +440,28 @@ class WeatherConditionsCreateView(CreateView):
     form_class = WeatherConditionsForm
     template_name = "weathercondition_add.html"
     success_url = reverse_lazy("weathercondition-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Weather condition added successfully!")
         return super().form_valid(form)
+
 
 class WeatherConditionsUpdateView(UpdateView):
     model = WeatherConditions
     form_class = WeatherConditionsForm
     template_name = "weathercondition_edit.html"
     success_url = reverse_lazy("weathercondition-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Weather condition updated successfully!")
         return super().form_valid(form)
+
 
 class WeatherConditionsDeleteView(DeleteView):
     model = WeatherConditions
     template_name = "weathercondition_delete.html"
     success_url = reverse_lazy("weathercondition-list")
+
     def form_valid(self, form):
         messages.success(self.request, "Weather condition deleted successfully!")
         return super().form_valid(form)

@@ -47,10 +47,12 @@
             <tbody>
             {% for object in object_list %}
             <tr>
-                <td>{{ object.truck_number }}</td>
-                <td>{{ object.model }}</td>
-                <td>{{ object.capacity }}</td>
-                <td>{{ object.station }}</td>
+                <td>{{ object.name }}</td>
+                <td>{{ object.latitude }}</td>
+                <td>{{ object.longitude }}</td>
+                <td>{{ object.address }}</td>
+                <td>{{ object.city }}</td>
+                <td>{{ object.country }}</td>
                 <td>
                 <a href="locations_list/{{ object.id }}">Edit</a>
                 <a href="locations_list/{{ object.id }}/delete" class="text-danger">Delete</a></td>
