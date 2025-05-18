@@ -100,7 +100,6 @@ def LineCountbyMonth(request):
 
 
 def MultilineIncidentTop3Country(request):
-
     query = """
     SELECT
         fl.country,
