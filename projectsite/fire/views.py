@@ -321,7 +321,7 @@ class FiretruckCreateView(CreateView):
     model = FireTruck
     form_class = FireTruckForm
     template_name = "firetruck_add.html"
-    success_url = reverse_lazy("firestation-list")
+    success_url = reverse_lazy("firetruck-list")
 
     def form_valid(self, form):
         messages.success(self.request, "Fire truck added successfully!")
@@ -332,7 +332,7 @@ class FiretruckUpdateView(UpdateView):
     model = FireTruck
     form_class = FireTruckForm
     template_name = "firetruck_edit.html"
-    success_url = reverse_lazy("firestation-list")
+    success_url = reverse_lazy("firetruck-list")
 
     def form_valid(self, form):
         messages.success(self.request, "Fire truck updated successfully!")
