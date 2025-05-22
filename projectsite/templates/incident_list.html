@@ -45,7 +45,7 @@
             <tbody>
             {% for object in object_list %}
             <tr>
-                <td>{{ object.location }}</td>
+                <td>{{ object.location.name }}</td>
                 <td>{{ object.date_time }}</td>
                 <td>{{ object.severity_level }}</td>
                 <td>{{ object.description }}</td>
