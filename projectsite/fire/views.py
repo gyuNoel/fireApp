@@ -381,7 +381,7 @@ class LocationsUpdateView(UpdateView):
 class LocationsDeleteView(DeleteView):
     model = Locations
     template_name = "location_delete.html"
-    success_url = reverse_lazy("flocations-list")
+    success_url = reverse_lazy("locations-list")
 
     def form_valid(self, form):
         messages.success(self.request, "Location deleted successfully!")
