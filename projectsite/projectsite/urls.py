@@ -103,7 +103,7 @@ urlpatterns = [
         name="locations-update",
     ),
     path(
-        "firestation_list/<pk>/delete",
+        "locations_list/<pk>/delete",
         LocationsDeleteView.as_view(),
         name="locations-delete",
     ),
